@@ -1,0 +1,37 @@
+nmap yields: 
+* FTP server on port 21
+	Anonymous login allowed
+* telnet on port 23
+* MS IIS HTTP server on port 80
+
+dirb on HTTP server yields:
+* /aspnet_client/system_web	403: Access is denied
+searchsploit on 'iis' yields only DoS for version 7.5 (not interesting)
+
+The FTP server allows for anonymous login (username: anonymous, password: blank)
+ftp 10.10.10.98 yields to directories:
+* Backups
+	backups.mdb (Microsoft Database file)
+* Engineer
+	'Access Control.zip' (requires password to unzip)
+
+backups.mdb is corrupt if downloaded with regular FTP 'get' command
+Can be obtained with wget:
+	wget --no-passive ftp://10.10.10.98/Backups/backup.mdb
+Can be browsed with mdb-sql:
+	mdb-sql backup.mdb
+	list tables
+	go
+Converted to SQLite DB (https://www.rebasedata.com/convert-mdb-to-sqlite-online)
+Can now be browsed with GUI
+Table 'auth_user' contains password for user 'engineer'
+Since the 'Access Control.zip' file was obtained from the 'Engineer' share, it seems obvious
+ to try unzipping the file with this password
+This yields an Outlook email folder, which can be read using 'readpst'.
+The resulting *.mbox is an HTML-file which can be read with a standard text editor.
+We get the following email:
+	'The password for the “security” account has been changed to 4Cc3ssC0ntr0ller' 
+
+Login with these credentials using telnet and find the user flag:
+	cd Desktop\user.txt
+	ff1f3b48913b213a31ff6756d2553d38

